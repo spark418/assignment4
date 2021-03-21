@@ -1,118 +1,91 @@
 package com.meritamerica.assignment4;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
-public class CDAccount extends BankAccount{
-	private CDOffering myOffering = null; 
-	
-	
-	
-	public CDAccount(CDOffering offering, double balance) {
-		this.myOffering = offering;
-		super.balance = balance;
-	}
-	
-	public CDAccount(CDOffering offering, double balance, long accountNumber, Date openedOn) {
-	   this.myOffering = offering;
-	   super.balance = balance;
-	   super.accountNumber = accountNumber;
-	   super.openedOn = openedOn;
-	   
-	}
+public class CDAccount extends BankAccount {
 
-	public  double getBalance() {
-		return super.getBalance();
-	}
+	private static double balance;
+	private CDOffering offering;
+	private static int term;
+	private static double interestRate;
+	private static String[] array = new String[5];
+	private static ArrayList<String> tran = new ArrayList<String>();
+	private static Date date;
+	private  static long accountNumber;
+	 
 	
-	public double getInterestRate() {
-		return myOffering.getInterestRate();
+	
+	
+	CDAccount(){
+		super(accountNumber, balance, interestRate, date);
+	}
+	CDAccount(long accountNumber, double balance, double interestRate, Date date, int term){
+		super(accountNumber, balance, interestRate, date);
+	}
+	CDAccount(CDOffering offering, double balance){
+		super(MeritBank.getNextAccountNumber(),balance,offering.getInterestRate());
 		
+		this.offering = offering;
+		this.term= this.offering.getTerm();
+		this.interestRate = this.offering.getInterestRate();
+		this.balance = balance;
 	}
 	
-	public int getTerm() {
-		System.out.println("Igothere");
-		return myOffering.getTerm();
-	}
+	//Need to override deposit and withdraw.
 	
-	public Date getStartDate(){
-		return super.openedOn;
-	}
-	
-	public long getAccountNumber() {
-		return super.getAccountNumber();
-	}
-	
-	public double futureValue() {
-		futureValue = balance * (Math.pow((1 + myOffering.getInterestRate()),myOffering.getTerm()));
-		return futureValue;
-	}
-	
-	@Override
-	public boolean withdraw(double amount) {
-		boolean success = false;
-		if(2020 > 2020 + myOffering.getTerm()) {
-			if (super.getBalance() > amount) {
-				super.balance = balance - amount;
-				success = true;
-			}
+	public static CDAccount readFromString(String accountData) {
+		
+		
+		CDAccount cd = new CDAccount();
+		String[] trans = accountData.split(",");
+		try {
+				
+					
+				accountNumber =    Long.parseLong(trans[0]);
+				balance =      Double.parseDouble(trans[1]);
+				interestRate = Double.parseDouble(trans[2]);
+				date =       cd.dateAccountOpened(trans[3]);
+				term =           Integer.parseInt(trans[4]);
+			
+		} catch (NumberFormatException e) {
+			throw e;
 		}
-		return success;
 		
+		CDOffering offering = new CDOffering();
+		cd = new CDAccount(accountNumber, balance, interestRate, date, term);
+		
+		
+		System.out.println("Account: " + accountNumber + "\n" +
+				"Balance: " + balance + "\n" + 
+				"Interest Rate: " + interestRate + "\n" + 
+				"Date: " + date + "\n" + 
+				"Term: " + term);
+		
+		return cd;
 	}
+	
+	public  int getTerm() {
+		return term
+				;
+	}
+	
 	@Override
 	public boolean deposit(double amount) {
-		boolean success = false;
-		
-		if(2020 > 2020 + myOffering.getTerm()) {
-			if(amount < 0) {
-				success = false;
-				return success;
-				
-			} else {
-				
-				super.balance = balance + amount;
-				success = true;
-				return success;
-				
-			}
-		}
-		
-		return success;
+		return false;
 	}
-		
-	public static CDAccount readFromString(String accountData) throws ParseException{
-		
-		String delimiter = ",";
-		CDAccount tempAccount = null;
-		CDOffering tempOffering = null;
-
-			String[] attributes = accountData.split(delimiter);
-			
-			long readNumber = Long.valueOf(attributes[0]);
-			double readBalance = Double.valueOf(attributes[1]);
-			double readInterestRate = Double.valueOf(attributes[2]);
-			
-			Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(attributes[3]);
-			Date readOpenedOn = date1;
-			
-			int readTerm = Integer.valueOf(attributes[4]);
-			
-			tempOffering = new CDOffering(readTerm, readInterestRate);
-			tempAccount = new CDAccount(tempOffering, readBalance, readNumber, readOpenedOn);
-
-		
-		return tempAccount;
+	public boolean withdraw (double amount) {
+		return false;
 	}
-
+	
+	public double futureValue() { //overriding term because could not figure out how to pass the term from offering to my variables in bankAccount
+		double fV  = balance * Math.pow((1+ interestRate ), term);
+		return fV;
+	}
 	@Override
-	public String writeToString() {
-		return accountNumber + "," + balance
-				+ "," + myOffering.getInterestRate() + "," + myOffering.getTerm() + "," + openedOn;
+	public String toString() {
+		return "CDAccount [balance=" + balance + ", Offering Term =" + offering.getTerm() + "]";
 	}
+
 	
-	
-	
-		
 }

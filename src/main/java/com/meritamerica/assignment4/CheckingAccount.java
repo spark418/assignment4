@@ -1,80 +1,56 @@
 package com.meritamerica.assignment4;
 
-import java.text.ParseException;
+import java.text.DateFormat;
+import java.lang.NumberFormatException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CheckingAccount extends BankAccount{
 	
-	private double interestRate = .0001;
+	private static double interestRate = 0.0001;
 	
-	CheckingAccount(double openingBalance){
-		super.balance = 0;
-		super.interestRate = interestRate;
-	}
-	CheckingAccount(long accountNumber, double openingBalance, double interestRate, Date openedOn){
-		super.accountNumber = accountNumber;
-		super.balance = openingBalance;
-		super.interestRate = interestRate;
-		super.openedOn = openedOn;
-	}
-	
-	public long getAccountNumber() {
-		return super.getAccountNumber()	;
-	}
-	
-	public Date getOpenedOn() {
-		return super.getOpenedOn();
-	}
-	
-	public double getBalance() {
-		return super.getBalance();
-	}
-	
-	public double getInterestRate() {
-		return super.getInterestRate();
-	
-	}
-	
-	public double futureValue(int years) {
-		return MeritBank.recursiveFutureValue(balance, years, interestRate);
-		
-	}
+	private static Date date ;
+	private static long accountNumber;
+	private static double balance;
 	
 
-	public String toString() {
-		
-		return "checking acccount balance: $" + balance
-				+ "\n" + "checking account interest rate: " + interestRate 
-				+ "\n" + "checking account balance in 3 years: $"+ futureValue(3);
-				
+	CheckingAccount() {
+		super(MeritBank.getNextAccountNumber(),balance,interestRate, date);
+	}
+	CheckingAccount(double openingBalance) {
+		super(MeritBank.getNextAccountNumber(),openingBalance,interestRate  );
+	}	
+	CheckingAccount(long accountNumber, double balance, double interestRate, Date date){
+		super(accountNumber,balance,interestRate, date);
+	}
+	public CheckingAccount(double balance, double interestRate) {
+		super(balance,interestRate);
 	}
 	
-	public static CheckingAccount readFromString(String accountData) throws ParseException{
+	public static CheckingAccount readFromString(String accountData)
+	{
+		double balance;
+		double interestRate;
 		
-		String delimiter = ",";
-		CheckingAccount tempAccount = null;
-		
-			String[] attributes = accountData.split(delimiter);
-			
-			
-			long readNumber = Long.valueOf(attributes[0]);
-			double readBalance = Double.valueOf(attributes[1]);
-			System.out.println(readBalance);
-			double readInterestRate = Double.valueOf(attributes[2]);
-			
-			
-			Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(attributes[3]);
-			Date readOpenedOn = date1;
-			
-			tempAccount = new CheckingAccount(readNumber, readBalance, readInterestRate, readOpenedOn);
-
-		
-		return tempAccount;
+		CheckingAccount checking = new CheckingAccount();
+		String[] values = accountData.split(",");
+		try 
+		{
+				accountNumber = Long.parseLong(values[0]);
+				balance = Double.parseDouble(values[1]);
+				interestRate = Double.parseDouble(values[2]);
+				date = checking.dateAccountOpened(values[3]);
+											
+		} catch (NumberFormatException e) 
+		{
+			throw e;
+		}
+			checking = new CheckingAccount(accountNumber, balance, 
+			interestRate, date);
+			return checking;
 	}
 	
 	
 	
-
-
+	
 }

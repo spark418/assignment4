@@ -1,115 +1,137 @@
 package com.meritamerica.assignment4;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-
 public abstract class BankAccount {
 	
-	public static long accountNumber;
-	public static double balance;
-	public static double interestRate = .01;
-	double futureValue;
-    static Date openedOn;
-    ArrayList<Transaction> tList = new ArrayList<Transaction>();
-    
-    public BankAccount() {
-    	
-    }
+	private double  balance ;
+	private double interestRate;
+	private long accountNumber;
+	private double futureValue;
+	private double accountTotal;
+	private Date date;
+	private int term;
+	List<Transaction> transactions;
 	
-	public BankAccount(double balance, double interestRate) {
-		BankAccount.balance = balance;
-		BankAccount.interestRate = interestRate;
+	
+	 BankAccount(double balance, double interestRate){
+		this.balance = balance;
+		this.interestRate = interestRate;
 	}
-	public BankAccount(long accountNumber, double balance, double interestRate, Date accountOpenedOn)
+	
+	 BankAccount(long accountNumber, double balance, double interestRate){
+		 this.accountNumber = accountNumber;
+		 this.balance = balance;
+		 this.interestRate = interestRate;
+	 }
+	BankAccount(long accountNumber, double balance, double interestRate, Date date){
+		this.accountNumber = accountNumber;
+		this.balance = balance;
+		this.interestRate = interestRate;
+		this.date= date;
+	}
+	
+
+	public long getAccountNumber() 
 	{
-		BankAccount.accountNumber = accountNumber;
-		BankAccount.balance = balance;
-		BankAccount.interestRate = interestRate;
-		BankAccount.openedOn = accountOpenedOn;
-		
+		return this.accountNumber;
 	}
 	
-	public void addTransaction(Transaction transaction) {
-		tList.add(transaction);
+	public double getBalance()
+	{
+		return this.balance;
+	}
+	public double getInterestRate() 
+	{
+		return this.interestRate;
 	}
 	
-	public List<Transaction> getTransactions(){
-		return tList;
-	}
-	
-	public long getAccountNumber() {
-		return accountNumber;
-	}
-	
-	public double getBalance() {
-		return balance;
-	}
-	
-	public double getInterestRate() {
-		return interestRate;
-	}
-	
-	public boolean withdraw(double amount) {
-		boolean success = false; 
-		if (BankAccount.balance > amount) {
-			balance = balance - amount;
-			success = true;
-		}
-		return success;
-		
-	}
-	
-	public boolean deposit(double amount) {
-		if(amount<0.0) {
-			//System.out.println("Cannot deposit a negative amount.");
-			return false;
-			
-		} else {
-			balance = balance + amount;
+	public boolean withdraw(double amount)
+	{
+		if((this.balance - amount) >= 0) 
+		{
+			this.balance = this.balance - amount;
 			return true;
-		}
-		
-		
+		} else
+			{
+			
+			return false;
+			}	
 	}
 	
-	public double futureValue(int years) {
-		
-		return MeritBank.recursiveFutureValue(balance, years, interestRate);
+	public boolean deposit(double amount) 
+	{
+		if(((this.balance + amount) <= 250000) && amount > 0)
+		{
+			this.balance = this.balance + amount;
+			return true;
+		} else 
+			return false;	
 	}
 	
-	public Date getOpenedOn() {
-		return openedOn;
-	}
 	
-	public static BankAccount readFromString(String accountData) throws ParseException{
+	public double futureValue(int term) 
+	{
+		this.futureValue = this.balance * Math.pow((1+ interestRate ), term);
+		return this.futureValue;
 		
-		String delimiter = ",";
-		//BankAccount tempAccount = null;
+	}
 
-			String[] attributes = accountData.split(delimiter);
-			
-			accountNumber = Long.valueOf(attributes[0]);
-			balance = Double.valueOf(attributes[1]);
-			interestRate = Double.valueOf(attributes[2]);
-			
-			
-			Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(attributes[3]);
-			openedOn = date1;
-			
-			//tempAccount = new BankAccount(readNumber, readBalance, readInterestRate, readOpenedOn);
-			
-
+	
+	//public date
+	
+	public  Date dateAccountOpened(String string)
+	{
+			try 
+			{
+				DateFormat startDate = new SimpleDateFormat("dd/MM/yyyy"); //sets format
+				Date date = (Date)startDate.parse(string); //converts to date
+	        	this.date = date;
+	        	return this.date;				
+			} catch(ParseException e)
+			{
+				System.out.println();
+			}
+			return this.date;
+	}
+	
+	public  Date getOpenedOn()
+	{
+		return this.date;
+	}
+	
+	//ASssignment4===
+	
+	
+	public void addTransaction(CDAccount cdA){
+		if(MeritBank.processTransaction(true)) {}
+		transactions.addAll((Collection<? extends Transaction>) cdA);	
 		
+		
+	}
+	
+	public List<Transaction>getTransactions(){
+		return transactions;
+	}
+	
+	public static BankAccount readFromString()
+	{
 		return null;
 	}
 	
-
-	public String writeToString() {
-		return accountNumber + "," + balance + "," + interestRate + "," + openedOn;
+	public String writeToString()
+	{
+		return"";
 	}
-
+	public String toString() 
+	{
+		return "";
+	}
+	
+		
 }

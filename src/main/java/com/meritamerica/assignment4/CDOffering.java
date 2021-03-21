@@ -1,42 +1,51 @@
 package com.meritamerica.assignment4;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 
 public class CDOffering {
-	
-	private int loanTerm;
-	private double iRate;
-	
-	
-	public  CDOffering (int term, double interestRate){
-		this.loanTerm = term;
-		this.iRate = interestRate;
 
+	private  static int term ;
+	private  static double interestRate;
+	
+	
+	CDOffering(){
+		
+	}
+	
+	CDOffering(int t, double interest){
+		term = t;
+		interestRate = interest;
 	}
 	
 	public int getTerm() {
-		return loanTerm;
+		return term;
 	}
 	
 	public double getInterestRate() {
-		return iRate;
+		return interestRate;
 	}
-
-	public static CDOffering readFromString(String cdOfferingDataString)throws java.lang.NumberFormatException{
-		
-		String delimiter = ",";
-		CDOffering tempOffering = null;
-
-			String[] attributes = cdOfferingDataString.split(delimiter);
-			
-			int readTerm = Integer.valueOf(attributes[0]);
-			double readInterestRate = Double.valueOf(attributes[1]);
-			tempOffering = new CDOffering(readTerm, readInterestRate);
-
-
-		
-		return tempOffering;
 	
+	public static CDOffering readFromString(String cdOfferingDataString) {
+	
+  		CDOffering offering = new CDOffering();
+  		String[] values = cdOfferingDataString.split(",");
+		try {
+			
+			term = Integer.parseInt(values[0]);
+			interestRate = Double.parseDouble(values[1]);
+			
+			
+		}catch (NumberFormatException e) {
+			throw e;
+		}
+		
+		offering = new CDOffering(term, interestRate);
+		
+		return offering;
+	}
+	
+	public String writeToString() {
+		String offering = getTerm() + "," + getInterestRate()+"\n";
+		return offering;
 	}
 }

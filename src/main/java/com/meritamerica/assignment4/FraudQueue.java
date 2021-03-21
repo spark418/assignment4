@@ -1,19 +1,21 @@
 package com.meritamerica.assignment4;
 
+import java.util.List;
+
 public class FraudQueue {
-	
-	Transaction t;
+
+	//public List<Transaction> ListOfTransaction = ArrayList<Transaction>();
 	
 	FraudQueue(){
-		
-	}
-	
-	public void addTransaction(Transaction transaction) {
-		this.t = transaction;
-	}
-	public Transaction getTransaction() {
-		return t;
-		
+
 	}
 
+	public void addTransaction(Transaction transaction) {
+	this.transaction = transaction.isProcessedByFraudTeam();
+	}
+
+	public Transaction getTransaction() {
+		return getTransaction();
+	}
+	Boolean transaction;
 }
